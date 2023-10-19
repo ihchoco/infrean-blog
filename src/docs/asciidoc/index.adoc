@@ -1,0 +1,35 @@
+= 호돌로그 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 글 단건조회
+
+=== 요청
+
+include::{snippets}/get-inquiry/http-request.adoc[]
+
+include::{snippets}/get-inquiry/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/get-inquiry/http-response.adoc[]
+
+include::{snippets}/get-inquiry/response-fields.adoc[]
+
+== 글 작성
+
+=== 요청
+
+include::{snippets}/post-create/http-request.adoc[]
+
+include::{snippets}/post-create/request-fields.adoc[]
+
+=== 응답
+
+include::{snippets}/post-create/http-response.adoc[]
+
+

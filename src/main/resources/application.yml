@@ -1,0 +1,18 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # pageable 셋팅 : 기본값은 false(0부터 읽겠다) -> true 변경(1부터 읽겠다)
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true #[false : 0부터 읽겠다, true : 1부터 읽겠다] default : false(0으로 들어와야 1번째 페이지)
+        default-page-size: 5 #Paging Size 결정
+
+  datasource:
+    url: jdbc:h2:mem:brawl
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver

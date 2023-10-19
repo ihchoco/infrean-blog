@@ -1,0 +1,104 @@
+//QueryDSL 추가(1)
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.16'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" ////QueryDSL 추가(2)
+	id "org.asciidoctor.jvm.convert" version "3.3.2" //Spring RestDocs 추가(1)
+}
+
+group = 'com.brawl'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '11'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	asciidoctorExt //Spring RestDocs 추가(2)
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext { //Spring RestDocs 추가(3)
+	asciidocVersion = "4.5.1.RELEASE" //Spring RestDocs 추가(4)
+	snippetsDir = file('build/generated-snippets') //Spring RestDocs 추가(5)
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//===================queryDSL 추가===================
+	// queryDSL 설정-QueryDSL 추가(3)
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	//===================================================
+
+	//===================queryDSL 추가===================
+	// Spring RestDocs 추가(5)
+	//project-version = 2.7.16.RELEASE X 스프링 부트 프로젝트 버전 아니라 스프링 버전이 필요
+	//하지만 아래처럼 그냥 버전 명시 안하면 자동으로 프로젝트에 맞는 버전을 다운로드 해서 가져온다
+	asciidoctorExt "org.springframework.restdocs:spring-restdocs-asciidoctor"
+	testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc"
+	//===================================================
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test { // Spring RestDocs 추가(6)
+	outputs.dir snippetsDir // Spring RestDocs 추가(7)
+}
+
+asciidoctor { // Spring RestDocs 추가(8)
+	inputs.dir snippetsDir // Spring RestDocs 추가(9)
+	configurations 'asciidoctorExt' // Spring RestDocs 추가(10)
+	dependsOn test // Spring RestDocs 추가(11)
+}
+
+bootJar { // Spring RestDocs 추가(12)
+	dependsOn asciidoctor
+
+	copy{
+		from asciidoctor.outputDir
+		into "src/main/resources/static/docs"
+	}
+}
+
+//===================queryDSL 추가===================
+// script for querydsl - QueryDSL 추가(4)
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+//===================================================
