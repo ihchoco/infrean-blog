@@ -35,7 +35,7 @@ public class PostService {
                         .content(postCreate.getContent())
                         .build();
         postRepository.save(post);
-	System.out.println("hello2 <<여기 mybranch에서 변경>>");
+	System.out.println("hello4 <<여기 mybranch에서 변경(충돌발생하기)>>");
     }
 
     public PostResponse get(Long id) {
